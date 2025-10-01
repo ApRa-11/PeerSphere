@@ -7,7 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import CreatePost from './pages/CreatePost';
 import Feed from './pages/Feed';
-import Profile from './pages/Profile'
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -28,11 +28,3 @@ function App() {
 }
 
 export default App;
-
-<Routes>
-  <Route path="/" element={<Landing />} />
-  <Route path="/login" element={<Login />} />
-  <Route path="/register" element={<Register />} />
-  <Route path="/create-post" element={<CreatePost />} />
-</Routes>
-

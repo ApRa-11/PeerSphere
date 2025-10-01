@@ -3,10 +3,12 @@ dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import path from 'path';
 
 
 // initialize
 const app = express();
+app.use('/uploads', express.static(path.join(path.resolve(), 'uploads')));
 
 // middlewares
 app.use(cors());

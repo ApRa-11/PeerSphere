@@ -17,8 +17,12 @@ export const createPost = async (req, res) => {
       author: req.user.id // coming from protect middleware
     });
 
+    // Populate author info before returning
+    await post.populate('author', 'displayName profilePic');
+
     res.status(201).json(post);
   } catch (err) {
+    console.error('Create post error:', err.message);
     res.status(500).json({ message: err.message });
   }
 };
@@ -29,11 +33,12 @@ export const createPost = async (req, res) => {
 export const getPosts = async (req, res) => {
   try {
     const posts = await Post.find()
-      .populate('author', 'name email')
+      .populate('author', 'displayName profilePic') // ✅ important
       .sort({ createdAt: -1 });
 
     res.json(posts);
   } catch (err) {
+    console.error('Get posts error:', err.message);
     res.status(500).json({ message: err.message });
   }
 };
@@ -53,8 +58,11 @@ export const likePost = async (req, res) => {
     }
 
     await post.save();
+    await post.populate('author', 'displayName profilePic');
+
     res.json(post);
   } catch (err) {
+    console.error('Like post error:', err.message);
     res.status(500).json({ message: err.message });
   }
 };
@@ -71,31 +79,21 @@ export const addComment = async (req, res) => {
     if (!post) return res.status(404).json({ message: 'Post not found' });
 
     const comment = {
-      user: req.user.id,
+      author: req.user.id,
       text
     };
 
     post.comments.push(comment);
     await post.save();
 
+    await post.populate([
+      { path: 'author', select: 'displayName profilePic' },
+      { path: 'comments.author', select: 'displayName profilePic' }
+    ]);
+
     res.status(201).json(post);
   } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// @desc    Get comments of a post
-// @route   GET /api/posts/:id/comments
-// @access  Private
-export const getComments = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id)
-      .populate('comments.user', 'name email');
-
-    if (!post) return res.status(404).json({ message: 'Post not found' });
-
-    res.json(post.comments);
-  } catch (err) {
+    console.error('Add comment error:', err.message);
     res.status(500).json({ message: err.message });
   }
 };

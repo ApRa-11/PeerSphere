@@ -1,79 +1,44 @@
-import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+import React, { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 const Profile = () => {
-  const { token, user } = useContext(AuthContext);
-  const [profile, setProfile] = useState(null);
-  const [editing, setEditing] = useState(false);
-  const [bio, setBio] = useState('');
-  const [profilePic, setProfilePic] = useState('');
+  const { user } = useContext(AuthContext); // logged-in user
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axios.get(`http://localhost:5000/api/users/${user.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setProfile(res.data);
-        setBio(res.data.bio || '');
-        setProfilePic(res.data.profilePic || '');
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchProfile();
-  }, [user.id, token]);
+  if (!user) {
+    return <p style={{ textAlign: 'center', marginTop: '50px' }}>You must be logged in to view your profile.</p>;
+  }
 
-  const handleSave = async () => {
-    try {
-      const res = await axios.put(
-        `http://localhost:5000/api/users/${user.id}`,
-        { bio, profilePic },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setProfile(res.data);
-      setEditing(false);
-    } catch (err) {
-      console.error(err);
+  // Determine avatar URL
+  const getAvatarUrl = () => {
+    if (!user.avatar) return 'https://via.placeholder.com/150'; // fallback
+
+    // If the avatar is a full URL (starts with http or https)
+    if (user.avatar.startsWith('http://') || user.avatar.startsWith('https://')) {
+      return user.avatar;
     }
+
+    // Otherwise, assume it is a local uploaded file stored in public/uploads
+    return `${process.env.PUBLIC_URL}/uploads/${user.avatar}`;
   };
 
-  if (!profile) return <p>Loading...</p>;
-
   return (
-    <div style={{ padding: '2rem', maxWidth: '500px', margin: '0 auto' }}>
-      <h2>My Profile</h2>
+    <div style={{
+      maxWidth: '500px',
+      margin: '50px auto',
+      padding: '20px',
+      border: '1px solid #ccc',
+      borderRadius: '10px',
+      textAlign: 'center'
+    }}>
       <img
-        src={profile.profilePic || 'https://via.placeholder.com/150'}
+        src={getAvatarUrl()}
         alt="Profile"
-        style={{ borderRadius: '50%', width: '150px', height: '150px' }}
+        style={{ width: '150px', height: '150px', borderRadius: '50%', marginBottom: '20px' }}
       />
-      <h3>{profile.name}</h3>
-      <p>{profile.email}</p>
-
-      {editing ? (
-        <div>
-          <input
-            type="text"
-            value={bio}
-            placeholder="Your bio..."
-            onChange={(e) => setBio(e.target.value)}
-          />
-          <input
-            type="text"
-            value={profilePic}
-            placeholder="Profile pic URL"
-            onChange={(e) => setProfilePic(e.target.value)}
-          />
-          <button onClick={handleSave}>Save</button>
-        </div>
-      ) : (
-        <>
-          <p>{profile.bio || 'No bio yet.'}</p>
-          <button onClick={() => setEditing(true)}>Edit Profile</button>
-        </>
-      )}
+      <h2>{user.name}</h2>
+      <p><strong>Username:</strong> {user.username}</p>
+      <p><strong>Email:</strong> {user.email}</p>
+      <p><strong>Bio:</strong> {user.bio || 'No bio available'}</p>
     </div>
   );
 };

@@ -1,18 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import CreatePost from './CreatePost';
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);
-  const { token } = useContext(AuthContext);
+  const { token, user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/posts', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setPosts(res.data);
       } catch (err) {
@@ -23,7 +22,6 @@ const Feed = () => {
     fetchPosts();
   }, [token]);
 
-  // Handle Like
   const handleLike = async (postId) => {
     try {
       const res = await axios.put(
@@ -31,29 +29,21 @@ const Feed = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      setPosts((prev) =>
-        prev.map((p) => (p._id === postId ? res.data : p))
-      );
+      setPosts((prev) => prev.map((p) => (p._id === postId ? res.data : p)));
     } catch (err) {
       console.error('Error liking post:', err);
     }
   };
 
-  // Handle Add Comment
   const handleAddComment = async (postId, text) => {
     if (!text.trim()) return;
-
     try {
       const res = await axios.post(
         `http://localhost:5000/api/posts/${postId}/comment`,
         { text },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      setPosts((prev) =>
-        prev.map((p) => (p._id === postId ? res.data : p))
-      );
+      setPosts((prev) => prev.map((p) => (p._id === postId ? res.data : p)));
     } catch (err) {
       console.error('Error adding comment:', err);
     }
@@ -61,7 +51,14 @@ const Feed = () => {
 
   return (
     <div style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
+      <CreatePost
+        token={token}
+        user={user}
+        onPostCreated={(newPost) => setPosts([newPost, ...posts])} // prepend new post
+      />
+
       <h2 style={{ marginBottom: '1.5rem' }}>Feed</h2>
+
       {posts.length === 0 ? (
         <p>No posts yet.</p>
       ) : (
@@ -70,16 +67,14 @@ const Feed = () => {
             {/* Header */}
             <div style={styles.header}>
               <img
-                src="https://via.placeholder.com/40"
-                alt="Profile"
+                src={post.author?.profilePic || 'https://via.placeholder.com/40'}
+                alt={post.author?.displayName || 'User'}
                 style={styles.avatar}
               />
               <div>
-                <strong>{post.author?.name || 'Unknown'}</strong>
+                <strong>{post.author?.displayName || 'Unknown'}</strong>
                 <p style={styles.timestamp}>
-                  {post.createdAt
-                    ? new Date(post.createdAt).toLocaleString()
-                    : 'Just now'}
+                  {post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now'}
                 </p>
               </div>
             </div>
@@ -97,13 +92,13 @@ const Feed = () => {
               </button>
             </div>
 
-            {/* Comments Section */}
+            {/* Comments */}
             <div style={{ marginTop: '1rem' }}>
               <strong>Comments:</strong>
               <ul>
                 {post.comments?.map((c, i) => (
                   <li key={i}>
-                    <b>{c.author?.name || 'Unknown'}:</b> {c.text}
+                    <b>{c.author?.displayName || 'Unknown'}:</b> {c.text}
                   </li>
                 ))}
               </ul>
@@ -161,8 +156,11 @@ const styles = {
     marginBottom: '1rem',
   },
   avatar: {
+    width: '40px',
+    height: '40px',
     borderRadius: '50%',
     marginRight: '0.75rem',
+    objectFit: 'cover',
   },
   timestamp: {
     fontSize: '0.8rem',
