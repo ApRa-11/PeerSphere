@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const CreatePost = ({ token, user, onPostCreated }) => {
+const CreatePost = ({ token, onPostCreated }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [message, setMessage] = useState('');
@@ -21,24 +21,15 @@ const CreatePost = ({ token, user, onPostCreated }) => {
       );
 
       if (res.status === 201) {
-        const newPost = {
-          ...res.data,
-          author: {
-            _id: user.id,
-            displayName: user.displayName,
-            profilePic: user.profilePic,
-          },
-        };
-        if (onPostCreated) onPostCreated(newPost);
+        onPostCreated(res.data);
         setTitle('');
         setContent('');
         setMessage('Post created!');
-      } else {
-        setMessage(res.data.message || 'Error creating post');
+        setTimeout(() => setMessage(''), 3000);
       }
     } catch (err) {
-      console.error(err);
-      setMessage('Server error');
+      console.error('Create post error:', err.response?.data || err.message);
+      setMessage(err.response?.data?.message || 'Server error');
     }
   };
 
@@ -51,17 +42,17 @@ const CreatePost = ({ token, user, onPostCreated }) => {
           placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          required
-        /><br />
+          style={{ display: 'block', marginBottom: '0.5rem', width: '100%' }}
+        />
         <textarea
           placeholder="Write something..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          required
-        /><br />
+          style={{ display: 'block', marginBottom: '0.5rem', width: '100%', height: '80px' }}
+        />
         <button type="submit">Post</button>
       </form>
-      <p>{message}</p>
+      {message && <p>{message}</p>}
     </div>
   );
 };

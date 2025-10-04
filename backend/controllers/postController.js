@@ -1,99 +1,91 @@
 import Post from '../model/postModel.js';
 
-// @desc    Create a new post
-// @route   POST /api/posts
-// @access  Private
+// Create a new post
 export const createPost = async (req, res) => {
   try {
     const { title, content } = req.body;
-
-    if (!title || !content) {
-      return res.status(400).json({ message: 'Title and content are required' });
-    }
+    if (!title || !content) return res.status(400).json({ message: 'Title and content required' });
 
     const post = await Post.create({
       title,
       content,
-      author: req.user.id // coming from protect middleware
+      author: req.user.id,
     });
 
-    // Populate author info before returning
     await post.populate('author', 'displayName profilePic');
 
     res.status(201).json(post);
   } catch (err) {
-    console.error('Create post error:', err.message);
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
 
-// @desc    Get all posts
-// @route   GET /api/posts
-// @access  Private
+// Get all posts (global feed)
 export const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
-      .populate('author', 'displayName profilePic') // ✅ important
+    const posts = await Post.find({})
+      .populate('author', 'displayName profilePic')
+      .populate('comments.author', 'displayName profilePic')
       .sort({ createdAt: -1 });
 
-    res.json(posts);
+    const safePosts = posts.map((p) => ({
+      ...p.toObject(),
+      likes: p.likes.map((id) => id.toString()),
+    }));
+
+    res.json(safePosts);
   } catch (err) {
-    console.error('Get posts error:', err.message);
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
 
-// @desc    Like or Unlike a post
-// @route   PUT /api/posts/:id/like
-// @access  Private
+// Like/Unlike
 export const likePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Post not found' });
 
-    if (post.likes.includes(req.user.id)) {
-      post.likes = post.likes.filter(like => like.toString() !== req.user.id);
-    } else {
-      post.likes.push(req.user.id);
-    }
+    const userId = req.user.id;
+    if (post.likes.includes(userId)) post.likes = post.likes.filter(id => id.toString() !== userId);
+    else post.likes.push(userId);
 
     await post.save();
     await post.populate('author', 'displayName profilePic');
+    await post.populate('comments.author', 'displayName profilePic');
 
-    res.json(post);
+    const response = post.toObject();
+    response.likes = post.likes.map(id => id.toString());
+
+    res.json(response);
   } catch (err) {
-    console.error('Like post error:', err.message);
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
 
-// @desc    Add a comment to a post
-// @route   POST /api/posts/:id/comment
-// @access  Private
+// Add comment
 export const addComment = async (req, res) => {
   try {
     const { text } = req.body;
-    if (!text) return res.status(400).json({ message: 'Comment text is required' });
+    if (!text) return res.status(400).json({ message: 'Comment text required' });
 
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Post not found' });
 
-    const comment = {
-      author: req.user.id,
-      text
-    };
-
-    post.comments.push(comment);
+    post.comments.push({ author: req.user.id, text });
     await post.save();
 
-    await post.populate([
-      { path: 'author', select: 'displayName profilePic' },
-      { path: 'comments.author', select: 'displayName profilePic' }
-    ]);
+    await post.populate('author', 'displayName profilePic');
+    await post.populate('comments.author', 'displayName profilePic');
 
-    res.status(201).json(post);
+    const response = post.toObject();
+    response.likes = post.likes.map(id => id.toString());
+
+    res.status(201).json(response);
   } catch (err) {
-    console.error('Add comment error:', err.message);
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };

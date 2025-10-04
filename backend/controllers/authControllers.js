@@ -17,13 +17,24 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Passwords do not match' });
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: 'Email already registered' });
+    // Check for existing username
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res.status(400).json({ message: 'Username already taken' });
+    }
+
+    // Check for existing email
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({ message: 'Email already registered' });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // If file uploaded, create a URL
-    const profilePicUrl = req.file ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}` : '';
+    const profilePicUrl = req.file
+      ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
+      : '';
 
     const newUser = await User.create({
       username,
@@ -56,20 +67,27 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// @desc    Login user
+// @desc    Login user (by username)
 // @route   POST /api/auth/login
 // @access  Public
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password required' });
+    }
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 

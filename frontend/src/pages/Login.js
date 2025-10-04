@@ -4,7 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState(''); // changed from email → username
   const [password, setPassword] = useState('');
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', {
-        email,
+        username,   // send username instead of email
         password,
       });
 
@@ -24,19 +24,22 @@ const Login = () => {
       navigate('/feed');
     } catch (err) {
       console.error(err);
-      alert('Invalid credentials');
+      alert(err.response?.data?.message || 'Invalid credentials');
     }
   };
 
   return (
     <div style={{ padding: '2rem' }}>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px' }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px' }}
+      >
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Username" // changed placeholder
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           style={{ marginBottom: '1rem', padding: '0.5rem' }}
           required
         />
@@ -48,7 +51,10 @@ const Login = () => {
           style={{ marginBottom: '1rem', padding: '0.5rem' }}
           required
         />
-        <button type="submit" style={{ padding: '0.5rem', backgroundColor: '#282c34', color: '#fff' }}>
+        <button
+          type="submit"
+          style={{ padding: '0.5rem', backgroundColor: '#282c34', color: '#fff' }}
+        >
           Login
         </button>
       </form>
