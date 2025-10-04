@@ -1,22 +1,32 @@
 // Profile.js
-import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { id } = useParams(); // get :id from URL
+  const [userData, setUserData] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState('https://via.placeholder.com/150');
 
   useEffect(() => {
-    if (user && user.profilePic) {
-      // Use profilePic from backend (already a full URL)
-      setAvatarUrl(user.profilePic);
-    }
-  }, [user]);
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/users/${id}`);
+        setUserData(res.data);
+        if (res.data.profilePic) setAvatarUrl(res.data.profilePic);
+      } catch (err) {
+        console.error('Error fetching user:', err);
+        setUserData(null);
+      }
+    };
 
-  if (!user) {
+    fetchUser();
+  }, [id]);
+
+  if (!userData) {
     return (
       <p style={{ textAlign: 'center', marginTop: '50px' }}>
-        You must be logged in to view your profile.
+        User not found or loading...
       </p>
     );
   }
@@ -42,22 +52,21 @@ const Profile = () => {
           marginBottom: '20px',
           objectFit: 'cover',
         }}
-        onError={(e) => {
-          e.target.src = 'https://via.placeholder.com/150';
-        }}
+        onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
       />
-      <h2>{user.name}</h2>
+      <h2>{userData.displayName}</h2>
       <p>
-        <strong>Username:</strong> {user.username}
+        <strong>Username:</strong> {userData.username}
       </p>
       <p>
-        <strong>Email:</strong> {user.email}
+        <strong>Email:</strong> {userData.email}
       </p>
       <p>
-        <strong>Bio:</strong> {user.bio || 'No bio available'}
+        <strong>Bio:</strong> {userData.bio || 'No bio available'}
       </p>
     </div>
   );
 };
 
 export default Profile;
+

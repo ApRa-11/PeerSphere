@@ -3,30 +3,47 @@ import React, { createContext, useState, useEffect } from 'react';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // State for token and user
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+  const [token, setToken] = useState('');
+  const [user, setUser] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Save to localStorage whenever token or user changes
+  // Load from localStorage
   useEffect(() => {
+    try {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+
+      if (storedToken) setToken(storedToken);
+      if (storedUser) setUser(JSON.parse(storedUser));
+    } catch (err) {
+      console.error('Failed to load auth from localStorage:', err);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  // Save to localStorage
+  useEffect(() => {
+    if (!isLoaded) return;
+
     if (token) localStorage.setItem('token', token);
     else localStorage.removeItem('token');
 
     if (user) localStorage.setItem('user', JSON.stringify(user));
     else localStorage.removeItem('user');
-  }, [token, user]);
+  }, [token, user, isLoaded]);
 
-  const login = (token, user) => {
-    setToken(token);
-    setUser(user);
+  const login = (newToken, newUser) => {
+    setToken(newToken);
+    setUser(newUser);
   };
 
   const logout = () => {
     setToken('');
     setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
   };
+
+  if (!isLoaded) return null;
 
   return (
     <AuthContext.Provider value={{ token, user, login, logout }}>
