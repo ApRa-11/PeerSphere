@@ -6,13 +6,13 @@ const Navbar = () => {
   const { token, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Logout function
   const handleLogout = useCallback(() => {
     logout();
-    setTimeout(() => {
-      navigate('/');
-    }, 0);
+    setTimeout(() => navigate('/'), 0);
   }, [logout, navigate]);
+
+  // Get user ID safely
+  const userId = user?._id || user?.id || null;
 
   return (
     <nav style={styles.nav}>
@@ -25,17 +25,13 @@ const Navbar = () => {
             <Link to="/feed" style={styles.link}>Home</Link>
             <Link to="/create" style={styles.link}>Create Post</Link>
 
-            {/* User profile link */}
-            {user && (
-              <Link
-                to={`/profile/${user._id}`}
-                style={styles.link}
-              >
-                {user.name || 'User'}
+            {/* Profile link */}
+            {userId && (
+              <Link to={`/profile/${userId}`} style={styles.link}>
+                User
               </Link>
             )}
 
-            {/* Logout link styled like others */}
             <span
               onClick={handleLogout}
               style={{ ...styles.link, cursor: 'pointer' }}

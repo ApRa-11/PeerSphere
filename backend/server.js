@@ -11,27 +11,28 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// initialize app
+// Initialize app
 const app = express();
 
-// middlewares
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// ✅ Serve uploads folder statically
+// Serve uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// routes
+// Import routes
 import authRoutes from './routes/authRoutes.js';
 import postRoutes from './routes/postRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
+// Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/users', userRoutes);
 
-// test route
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
+// Test route
+app.get('/', (req, res) => res.send('API is running...'));
 
 // MongoDB connection
 console.log('Connecting to:', process.env.MONGO_URI);

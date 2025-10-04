@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import CreatePost from './CreatePost';
 
@@ -30,7 +30,6 @@ const CommentInput = ({ postId, onAddComment }) => {
 const Feed = () => {
   const [posts, setPosts] = useState([]);
   const { token, user } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (token) fetchPosts();
@@ -87,21 +86,19 @@ const Feed = () => {
             <div key={post._id} style={styles.card}>
               <div style={styles.header}>
                 {/* Clickable profile picture */}
-                <img
-                  src={post.author?.profilePic || 'https://via.placeholder.com/40'}
-                  alt={post.author?.displayName || 'User'}
-                  style={{ ...styles.avatar, cursor: post.author?._id ? 'pointer' : 'default' }}
-                  onClick={() => post.author?._id && navigate(`/profile/${post.author._id}`)}
-                />
+                <Link to={`/profile/${post.author?._id}`}>
+                  <img
+                    src={post.author?.profilePic || 'https://via.placeholder.com/40'}
+                    alt={post.author?.displayName || 'User'}
+                    style={styles.avatar}
+                  />
+                </Link>
 
                 <div>
                   {/* Clickable author name */}
-                  <strong
-                    style={{ cursor: post.author?._id ? 'pointer' : 'default', color: '#000' }}
-                    onClick={() => post.author?._id && navigate(`/profile/${post.author._id}`)}
-                  >
-                    {post.author?.displayName || 'Unknown'}
-                  </strong>
+                  <Link to={`/profile/${post.author?._id}`} style={{ textDecoration: 'none', color: '#000' }}>
+                    <strong>{post.author?.displayName || 'Unknown'}</strong>
+                  </Link>
                   <p style={styles.timestamp}>
                     {post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now'}
                   </p>
@@ -124,12 +121,9 @@ const Feed = () => {
                 <ul>
                   {post.comments?.map((c, i) => (
                     <li key={i}>
-                      <b
-                        style={{ cursor: c.author?._id ? 'pointer' : 'default', color: '#000' }}
-                        onClick={() => c.author?._id && navigate(`/profile/${c.author._id}`)}
-                      >
-                        {c.author?.displayName || 'Unknown'}
-                      </b>: {c.text}
+                      <Link to={`/profile/${c.author?._id}`} style={{ textDecoration: 'none', color: '#000' }}>
+                        <b>{c.author?.displayName || 'Unknown'}</b>
+                      </Link>: {c.text}
                     </li>
                   )) || <li>No comments yet.</li>}
                 </ul>
@@ -146,7 +140,7 @@ const Feed = () => {
 const styles = {
   card: { border: '1px solid #ddd', borderRadius: '8px', padding: '1rem', marginBottom: '1.5rem', backgroundColor: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' },
   header: { display: 'flex', alignItems: 'center', marginBottom: '1rem' },
-  avatar: { width: '40px', height: '40px', borderRadius: '50%', marginRight: '0.75rem', objectFit: 'cover' },
+  avatar: { width: '40px', height: '40px', borderRadius: '50%', marginRight: '0.75rem', objectFit: 'cover', cursor: 'pointer' },
   timestamp: { fontSize: '0.8rem', color: '#666', margin: 0 },
   body: { marginBottom: '1rem' },
   footer: { display: 'flex', gap: '1rem' },

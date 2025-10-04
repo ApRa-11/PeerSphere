@@ -1,14 +1,17 @@
 import express from 'express';
-import { protect } from '../middleware/authMiddleware.js';
-
+import User from '../model/userModel.js';
 const router = express.Router();
 
-// Test protected route
-router.get('/me', protect, (req, res) => {
-  res.json({
-    message: 'You are authenticated!',
-    user: req.user  // decoded payload from JWT
-  });
+// GET user by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    console.error('Error fetching user:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 export default router;
