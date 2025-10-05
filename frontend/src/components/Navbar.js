@@ -13,7 +13,6 @@ const Navbar = () => {
     setTimeout(() => navigate('/'), 0);
   }, [logout, navigate]);
 
-  // Get user ID safely
   const userId = user?._id || user?.id || null;
 
   // --- Search state ---
@@ -22,6 +21,11 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef();
 
+  // --- Notifications state ---
+  const [requests, setRequests] = useState([]);
+  const [showRequests, setShowRequests] = useState(false);
+
+  // Hide search dropdown when clicked outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -32,6 +36,7 @@ const Navbar = () => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  // Search users
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
@@ -40,6 +45,39 @@ const Navbar = () => {
       const res = await axios.get(`/api/users?search=${searchQuery}`);
       setResults(res.data.users);
       setShowDropdown(true);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Fetch incoming peer requests
+  const fetchRequests = async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get('http://localhost:5000/api/peers/incoming', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setRequests(res.data.requests || []);
+    } catch (err) {
+      console.error('Failed to fetch requests:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequests();
+    const interval = setInterval(fetchRequests, 10000); // refresh every 10s
+    return () => clearInterval(interval);
+  }, [token]);
+
+  // Handle accept/reject
+  const handleRespond = async (requesterId, action) => {
+    try {
+      await axios.post(
+        'http://localhost:5000/api/peers/respond',
+        { requesterId, action },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchRequests();
     } catch (err) {
       console.error(err);
     }
@@ -91,6 +129,51 @@ const Navbar = () => {
             <Link to="/feed" style={styles.link}>Home</Link>
             <Link to="/create" style={styles.link}>Create Post</Link>
 
+            {/* Notification Bell */}
+            <div
+              style={styles.bellContainer}
+              onClick={() => setShowRequests((prev) => !prev)}
+            >
+              🔔
+              {requests.length > 0 && (
+                <span style={styles.badge}>{requests.length}</span>
+              )}
+              {showRequests && (
+                <div style={styles.requestsDropdown}>
+                  {requests.length === 0 ? (
+                    <p style={{ margin: 0 }}>No new requests</p>
+                  ) : (
+                    requests.map((r) => (
+                      <div key={r._id} style={styles.requestItem}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <img
+                            src={r.requesterId?.profilePic || '/images/default-avatar.png'}
+                            alt={r.requesterId?.fullName}
+                            style={{ width: '35px', height: '35px', borderRadius: '50%' }}
+                          />
+                          <span>{r.requesterId?.fullName}</span>
+                        </div>
+                        <div style={{ display: 'flex', gap: '6px', marginTop: '5px' }}>
+                          <button
+                            style={{ ...styles.reqBtn, background: '#4caf50' }}
+                            onClick={() => handleRespond(r.requesterId._id, 'accept')}
+                          >
+                            Accept
+                          </button>
+                          <button
+                            style={{ ...styles.reqBtn, background: '#f44336' }}
+                            onClick={() => handleRespond(r.requesterId._id, 'reject')}
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Profile link */}
             {userId && (
               <Link to={`/profile/${userId}`} style={styles.link}>
@@ -131,16 +214,8 @@ const styles = {
   link: { color: '#fff', textDecoration: 'none' },
 
   // Search
-  searchForm: {
-    position: 'relative',
-    display: 'flex',
-    marginRight: '20px'
-  },
-  searchInput: {
-    padding: '5px 8px',
-    borderRadius: '6px',
-    border: 'none'
-  },
+  searchForm: { position: 'relative', display: 'flex', marginRight: '20px' },
+  searchInput: { padding: '5px 8px', borderRadius: '6px', border: 'none' },
   searchButton: {
     marginLeft: '5px',
     padding: '5px 10px',
@@ -172,7 +247,45 @@ const styles = {
   avatar: { width: '40px', height: '40px', borderRadius: '50%', marginRight: '8px' },
   userInfo: { flex: 1 },
   fullName: { margin: 0, fontWeight: 600 },
-  username: { margin: 0, fontSize: '0.85rem', color: '#666' }
+  username: { margin: 0, fontSize: '0.85rem', color: '#666' },
+
+  // Notifications
+  bellContainer: { position: 'relative', cursor: 'pointer' },
+  badge: {
+    position: 'absolute',
+    top: '-5px',
+    right: '-10px',
+    background: 'red',
+    color: 'white',
+    borderRadius: '50%',
+    padding: '2px 6px',
+    fontSize: '0.7rem'
+  },
+  requestsDropdown: {
+    position: 'absolute',
+    right: 0,
+    top: '25px',
+    background: 'white',
+    color: 'black',
+    border: '1px solid #ccc',
+    borderRadius: '6px',
+    minWidth: '220px',
+    padding: '8px',
+    zIndex: 1000
+  },
+  requestItem: {
+    borderBottom: '1px solid #eee',
+    paddingBottom: '6px',
+    marginBottom: '6px'
+  },
+  reqBtn: {
+    flex: 1,
+    border: 'none',
+    color: 'white',
+    padding: '4px 8px',
+    borderRadius: '4px',
+    cursor: 'pointer'
+  }
 };
 
 export default Navbar;

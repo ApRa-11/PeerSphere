@@ -25,11 +25,13 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 import authRoutes from './routes/authRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import peerRoutes from './routes/peerRoutes.js'; // ✅ ADD THIS
 
 // Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/peers', peerRoutes); // ✅ MOUNT THIS
 
 // Test route
 app.get('/', (req, res) => res.send('API is running...'));

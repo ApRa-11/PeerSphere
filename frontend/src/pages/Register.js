@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/Register.css';
 
+// If using import (React 18+ / Vite)
+import defaultProfilePic from '../images/profile-picture.jpeg'; // <-- Default image path
+
 const Register = () => {
   const [formData, setFormData] = useState({
     username: '',
-    fullName: '',   // changed from displayName
+    fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -48,7 +51,7 @@ const Register = () => {
     try {
       const data = new FormData();
       data.append('username', username);
-      data.append('fullName', fullName);  // changed from displayName
+      data.append('fullName', fullName);
       data.append('email', email);
       data.append('password', password);
       data.append('confirmPassword', confirmPassword);
@@ -94,7 +97,7 @@ const Register = () => {
 
           <input
             type="text"
-            name="fullName"   // changed
+            name="fullName"
             placeholder="Full Name"
             value={formData.fullName}
             onChange={handleChange}
@@ -128,12 +131,35 @@ const Register = () => {
             required
           />
 
-          <input
-            type="file"
-            name="profilePic"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
+          {/* Profile Picture Upload */}
+          <div className="profile-pic-upload">
+            <label htmlFor="profilePicInput" className="profile-pic-label">
+              <div className="profile-pic-placeholder">
+                {profilePic ? (
+                  <img
+                    src={URL.createObjectURL(profilePic)}
+                    alt="Profile"
+                    className="profile-pic-img"
+                  />
+                ) : (
+                  <img
+                    src={defaultProfilePic}  // <-- Default profile picture
+                    alt="Default Profile"
+                    className="profile-pic-img"
+                  />
+                )}
+              </div>
+              <span className="add-picture-text">Add Picture</span>
+            </label>
+            <input
+              type="file"
+              id="profilePicInput"
+              name="profilePic"
+              accept="image/*"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+            />
+          </div>
 
           <textarea
             name="bio"

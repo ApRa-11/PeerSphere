@@ -1,6 +1,7 @@
 import express from 'express';
 import { getUserById, searchUsers } from '../controllers/userController.js';
-import protect from '../middlewares/authMiddleware.js'; // default import
+import { protect } from '../middlewares/authMiddleware.js';
+
 
 const router = express.Router();
 
