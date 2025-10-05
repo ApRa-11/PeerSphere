@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './styles/Register.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
     username: '',
-    displayName: '',
+    fullName: '',   // changed from displayName
     email: '',
     password: '',
     confirmPassword: '',
@@ -12,7 +13,7 @@ const Register = () => {
     dob: ''
   });
 
-  const [profilePic, setProfilePic] = useState(null); // for file
+  const [profilePic, setProfilePic] = useState(null);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -29,9 +30,9 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { username, displayName, email, password, confirmPassword } = formData;
+    const { username, fullName, email, password, confirmPassword } = formData;
 
-    if (!username || !displayName || !email || !password || !confirmPassword) {
+    if (!username || !fullName || !email || !password || !confirmPassword) {
       setMessage('Please fill all required fields');
       return;
     }
@@ -47,7 +48,7 @@ const Register = () => {
     try {
       const data = new FormData();
       data.append('username', username);
-      data.append('displayName', displayName);
+      data.append('fullName', fullName);  // changed from displayName
       data.append('email', email);
       data.append('password', password);
       data.append('confirmPassword', confirmPassword);
@@ -78,80 +79,82 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={formData.username}
-          onChange={handleChange}
-          required
-        /><br />
+    <div className="register-page">
+      <div className="register-box">
+        <h2>Register</h2>
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="register-form">
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="text"
-          name="displayName"
-          placeholder="Display Name"
-          value={formData.displayName}
-          onChange={handleChange}
-          required
-        /><br />
+          <input
+            type="text"
+            name="fullName"   // changed
+            placeholder="Full Name"
+            value={formData.fullName}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        /><br />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        /><br />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-        /><br />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
 
-        <input
-          type="file"
-          name="profilePic"
-          accept="image/*"
-          onChange={handleFileChange}
-        /><br />
+          <input
+            type="file"
+            name="profilePic"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
 
-        <textarea
-          name="bio"
-          placeholder="Bio"
-          value={formData.bio}
-          onChange={handleChange}
-        /><br />
+          <textarea
+            name="bio"
+            placeholder="Bio"
+            value={formData.bio}
+            onChange={handleChange}
+          />
 
-        <input
-          type="date"
-          name="dob"
-          value={formData.dob}
-          onChange={handleChange}
-        /><br />
+          <input
+            type="date"
+            name="dob"
+            value={formData.dob}
+            onChange={handleChange}
+          />
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Registering...' : 'Register'}
-        </button>
-      </form>
-      {message && <p>{message}</p>}
+          <button type="submit" disabled={loading}>
+            {loading ? 'Registering...' : 'Register'}
+          </button>
+        </form>
+        {message && <p className="message">{message}</p>}
+      </div>
     </div>
   );
 };

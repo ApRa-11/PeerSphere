@@ -9,11 +9,6 @@
   height: 100%;
 }
 
-.login-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
 .login-box {
   flex: 1;

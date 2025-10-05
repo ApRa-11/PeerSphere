@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import graduationImg from '../images/graduation.png';
 import './styles/Login.css';
 
 const Login = () => {
@@ -29,14 +28,6 @@ const Login = () => {
 
   return (
     <div className="login-page">
-      <div className="login-image">
-        <img
-                  src={graduationImg}
-                  alt="Graduation"
-                  className="graduation-img"
-                />
-      </div>
-
       <div className="login-box">
         <h2 className="login-title">Login</h2>
         <form onSubmit={handleSubmit} className="login-form">

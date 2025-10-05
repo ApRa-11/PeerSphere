@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import CreatePost from './CreatePost';
+import AddPeerButton from '../components/AddPeerButton'; // make sure path is correct
 
 const CommentInput = ({ postId, onAddComment }) => {
   const [text, setText] = useState('');
@@ -80,12 +81,12 @@ const Feed = () => {
       {!posts.length ? <p>No posts yet.</p> :
         posts.map(post => {
           if (!post) return null;
-          const isLiked = user ? post.likes?.includes(user.id) : false;
+          const isLiked = user ? post.likes?.includes(user.id || user._id) : false;
+          const isOwnPost = user?._id === post.author?._id;
 
           return (
             <div key={post._id} style={styles.card}>
               <div style={styles.header}>
-                {/* Clickable profile picture */}
                 <Link to={`/profile/${post.author?._id}`}>
                   <img
                     src={post.author?.profilePic || 'https://via.placeholder.com/40'}
@@ -95,10 +96,13 @@ const Feed = () => {
                 </Link>
 
                 <div>
-                  {/* Clickable author name */}
-                  <Link to={`/profile/${post.author?._id}`} style={{ textDecoration: 'none', color: '#000' }}>
-                    <strong>{post.author?.displayName || 'Unknown'}</strong>
-                  </Link>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Link to={`/profile/${post.author?._id}`} style={{ textDecoration: 'none', color: '#000', fontWeight: 'bold' }}>
+                      {post.author?.displayName || 'Unknown'}
+                    </Link>
+                    {/* AddPeerButton next to author if not own post */}
+                    {!isOwnPost && token && <AddPeerButton targetUserId={post.author?._id} />}
+                  </div>
                   <p style={styles.timestamp}>
                     {post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now'}
                   </p>
@@ -139,8 +143,8 @@ const Feed = () => {
 
 const styles = {
   card: { border: '1px solid #ddd', borderRadius: '8px', padding: '1rem', marginBottom: '1.5rem', backgroundColor: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' },
-  header: { display: 'flex', alignItems: 'center', marginBottom: '1rem' },
-  avatar: { width: '40px', height: '40px', borderRadius: '50%', marginRight: '0.75rem', objectFit: 'cover', cursor: 'pointer' },
+  header: { display: 'flex', alignItems: 'center', marginBottom: '1rem', gap: '0.75rem' },
+  avatar: { width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', cursor: 'pointer' },
   timestamp: { fontSize: '0.8rem', color: '#666', margin: 0 },
   body: { marginBottom: '1rem' },
   footer: { display: 'flex', gap: '1rem' },

@@ -1,17 +1,13 @@
 import express from 'express';
-import User from '../model/userModel.js';
+import { getUserById, searchUsers } from '../controllers/userController.js';
+import protect from '../middlewares/authMiddleware.js'; // default import
+
 const router = express.Router();
 
-// GET user by ID
-router.get('/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id).select('-password');
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
-  } catch (err) {
-    console.error('Error fetching user:', err);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
+// GET user by ID (without password)
+router.get('/:id', protect, getUserById);
+
+// GET /api/users?search=keyword - search users by username or fullName
+router.get('/', protect, searchUsers);
 
 export default router;

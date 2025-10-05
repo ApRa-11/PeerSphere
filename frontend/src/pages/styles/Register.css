@@ -1,0 +1,68 @@
+.register-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh; /* smaller height so it doesn't touch navbar/footer */
+  padding: 2rem 0; /* space on top and bottom */
+  background: url('../../images/white-background.jpg') no-repeat center center/cover;
+}
+
+.register-box {
+  background: url('../../images/black-background.jpg') no-repeat center center/cover;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+  color: white;
+  width: 380px; /* slightly smaller width */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-box h2 {
+  margin-bottom: 1.8rem;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.register-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-form input,
+.register-form textarea {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+}
+
+.register-form textarea {
+  resize: none;
+  height: 80px;
+}
+
+.register-form button {
+  padding: 0.7rem 2.5rem;
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.register-form button:hover {
+  background-color: #ddd;
+}
+
+.message {
+  margin-top: 1rem;
+  text-align: center;
+}

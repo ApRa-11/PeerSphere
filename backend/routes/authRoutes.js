@@ -1,7 +1,7 @@
 import express from 'express';
 import { upload } from '../middlewares/uploadMiddleware.js';
 import { registerUser, loginUser } from '../controllers/authControllers.js';
-import { protect } from '../middlewares/authMiddleware.js';
+import protect from '../middlewares/authMiddleware.js'; // default import
 
 const router = express.Router();
 
@@ -13,7 +13,6 @@ router.post('/login', loginUser);
 
 // Protected route to get logged-in user info
 router.get('/me', protect, (req, res) => {
-  // Ensure profilePic is included
   const { username, displayName, email, profilePic, bio } = req.user;
   res.json({
     user: { username, name: displayName, email, profilePic, bio }
