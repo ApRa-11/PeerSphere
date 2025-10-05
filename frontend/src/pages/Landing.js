@@ -1,19 +1,32 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import './styles/Landing.css';
+import graduationImg from '../images/graduation.png';
 
-const Landing = () => {
+function Landing() {
+  const navigate = useNavigate();
+
   return (
-    <div>
-      <h1>Welcome to PeerSphere</h1>
-      <p>A simple college social media platform</p>
-      <Link to="/login">
-        <button>Login</button>
-      </Link>
-      <Link to="/register">
-        <button>Register</button>
-      </Link>
+    <div className="landing-container">
+      <div className="left-side">
+        <h1>PeerSphere</h1>
+        <p>Your campus social media hub to connect with your peers</p>
+        <button className="btn" onClick={() => navigate('/register')}>
+          Sign Up
+        </button>
+        <button className="btn" onClick={() => navigate('/login')}>
+          Login
+        </button>
+      </div>
+      <div className="right-side">
+        <img
+          src={graduationImg}
+          alt="Graduation"
+          className="graduation-img"
+        />
+      </div>
     </div>
   );
-};
+}
 
 export default Landing;

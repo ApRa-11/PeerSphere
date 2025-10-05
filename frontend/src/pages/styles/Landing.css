@@ -1,0 +1,58 @@
+.landing-container {
+  display: flex;
+  height: 100vh;
+}
+
+.left-side {
+  flex: 1;
+  background: url('../../images/black-background.jpg') no-repeat center center;
+  background-size: cover;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.right-side {
+  flex: 1;
+  background: url('../../images/white-background.jpg') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;   /* horizontally center */
+  align-items: flex-end;     /* push image to bottom */
+  position: relative;
+}
+
+.graduation-img {
+  width: 100%;           /* make it bigger to reach black background */
+  max-width: none;       /* remove max-width limit */
+  object-fit: cover;
+}
+
+.btn {
+  margin: 10px;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 25px;
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #555;
+}
+
+.left-side h1 {
+  font-size: 3.5rem;  /* increased from 3rem */
+  font-weight: bold;
+}
+
+.left-side p {
+  font-size: 1.5rem;  /* increased from default ~1.2rem */
+  margin-top: 10px;
+}
+
