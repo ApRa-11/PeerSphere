@@ -1,0 +1,180 @@
+/* Main page background */
+.feed-container {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  background: url('../../images/white-background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  color: #000; /* default text color */
+}
+
+/* Center feed panel */
+.center-panel {
+  flex: 1;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.center-panel h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Right panel with CreatePost */
+.right-panel {
+  width: 25%;
+}
+
+.create-post-box {
+  background: url('../../images/black-background.jpg') no-repeat center center;
+  background-size: cover;
+  padding: 1.5rem;
+  border-radius: 8px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  min-height: 250px; /* taller box */
+}
+
+/* Post card styling */
+.post-card {
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background: url('../../images/black-background.jpg') no-repeat center center;
+  background-size: cover;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+
+/* Post header */
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 1px solid #fff;
+}
+
+.author-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.author-name {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.15rem; /* slightly bigger */
+}
+
+/* Subtle Add Peer button as + */
+.add-peer-button {
+  background: none;
+  color: #ccc;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 5px;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.add-peer-button:hover {
+  color: #fff;
+}
+
+.timestamp {
+  font-size: 0.8rem;
+  color: #ccc;
+  margin: 0;
+}
+
+/* Post body */
+.post-body {
+  margin-bottom: 1rem;
+}
+
+.post-body h3 {
+  color: #ffd700; /* title stands out */
+}
+
+.post-body p {
+  color: #eee;
+}
+
+/* Post footer */
+.post-footer {
+  display: flex;
+  gap: 1rem;
+}
+
+.post-footer button {
+  background: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #000;
+  transition: background 0.2s;
+}
+
+.post-footer button:hover {
+  background: #ddd;
+}
+
+/* Comments section */
+.comments-section {
+  margin-top: 1rem;
+}
+
+.comment-input {
+  display: flex;
+  margin-top: 0.5rem;
+}
+
+.comment-input input {
+  padding: 0.5rem;
+  width: 80%;
+  margin-right: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #000;
+}
+
+.comment-input button {
+  background: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #000;
+  transition: background 0.2s;
+}
+
+.comment-input button:hover {
+  background: #ddd;
+}
+
+.comment-author {
+  text-decoration: none;
+  color: #ffd700;
+}

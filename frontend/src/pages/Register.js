@@ -85,6 +85,29 @@ const Register = () => {
     <div className="register-page">
       <div className="register-box">
         <h2>Register</h2>
+
+        {/* Profile Picture Upload moved to top */}
+        <div className="profile-pic-upload">
+          <div className="profile-pic-container">
+            <img
+              src={profilePic ? URL.createObjectURL(profilePic) : defaultProfilePic}
+              alt="Profile"
+              className="profile-pic-img"
+            />
+            <label htmlFor="profilePicInput">
+              <button type="button" className="add-picture-btn">Add Picture</button>
+            </label>
+          </div>
+          <input
+            type="file"
+            id="profilePicInput"
+            name="profilePic"
+            accept="image/*"
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+          />
+        </div>
+
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="register-form">
           <input
             type="text"
@@ -130,36 +153,6 @@ const Register = () => {
             onChange={handleChange}
             required
           />
-
-          {/* Profile Picture Upload */}
-          <div className="profile-pic-upload">
-            <label htmlFor="profilePicInput" className="profile-pic-label">
-              <div className="profile-pic-placeholder">
-                {profilePic ? (
-                  <img
-                    src={URL.createObjectURL(profilePic)}
-                    alt="Profile"
-                    className="profile-pic-img"
-                  />
-                ) : (
-                  <img
-                    src={defaultProfilePic}  // <-- Default profile picture
-                    alt="Default Profile"
-                    className="profile-pic-img"
-                  />
-                )}
-              </div>
-              <span className="add-picture-text">Add Picture</span>
-            </label>
-            <input
-              type="file"
-              id="profilePicInput"
-              name="profilePic"
-              accept="image/*"
-              onChange={handleFileChange}
-              style={{ display: 'none' }}
-            />
-          </div>
 
           <textarea
             name="bio"

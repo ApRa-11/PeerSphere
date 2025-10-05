@@ -1,0 +1,15 @@
+.add-peer-button {
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #fff; /* plain white */
+  color: #000; /* black text */
+  border: 1px solid #000; /* subtle border */
+  cursor: pointer;
+  margin-left: 10px;
+  transition: none;
+}
+
+.add-peer-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

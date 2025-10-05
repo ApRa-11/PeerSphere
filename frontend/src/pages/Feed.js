@@ -3,27 +3,29 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import CreatePost from './CreatePost';
-import AddPeerButton from '../components/AddPeerButton'; // make sure path is correct
+import AddPeerButton from '../components/AddPeerButton';
+import './styles/Feed.css';
 
 const CommentInput = ({ postId, onAddComment }) => {
   const [text, setText] = useState('');
+
   const handleSubmit = () => {
     if (text.trim()) {
       onAddComment(postId, text);
       setText('');
     }
   };
+
   return (
-    <div style={{ marginTop: '0.5rem' }}>
+    <div className="comment-input">
       <input
         type="text"
         value={text}
         placeholder="Write a comment..."
         onChange={(e) => setText(e.target.value)}
-        style={{ padding: '0.5rem', width: '80%', marginRight: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }}
         disabled={!postId}
       />
-      <button style={styles.btn} onClick={handleSubmit} disabled={!text.trim()}>Post</button>
+      <button onClick={handleSubmit} disabled={!text.trim()}>Post</button>
     </div>
   );
 };
@@ -63,7 +65,8 @@ const Feed = () => {
   const handleAddComment = async (postId, text) => {
     if (!token || !user) return;
     try {
-      const res = await axios.post(`http://localhost:5000/api/posts/${postId}/comment`,
+      const res = await axios.post(
+        `http://localhost:5000/api/posts/${postId}/comment`,
         { text },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -74,81 +77,79 @@ const Feed = () => {
   };
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
-      {token && <CreatePost token={token} onPostCreated={newPost => setPosts(prev => [newPost, ...prev])} />}
-      <h2 style={{ marginBottom: '1.5rem' }}>Feed</h2>
+    <div className="feed-container">
+      <div className="center-panel">
+        <h2>See what your peers are talking about</h2>
+        {!posts.length ? <p>No posts yet.</p> :
+          posts.map(post => {
+            if (!post) return null;
+            const isLiked = user ? post.likes?.includes(user.id || user._id) : false;
+            const isOwnPost = user?._id === post.author?._id;
 
-      {!posts.length ? <p>No posts yet.</p> :
-        posts.map(post => {
-          if (!post) return null;
-          const isLiked = user ? post.likes?.includes(user.id || user._id) : false;
-          const isOwnPost = user?._id === post.author?._id;
-
-          return (
-            <div key={post._id} style={styles.card}>
-              <div style={styles.header}>
-                <Link to={`/profile/${post.author?._id}`}>
-                  <img
-                    src={post.author?.profilePic || 'https://via.placeholder.com/40'}
-                    alt={post.author?.displayName || 'User'}
-                    style={styles.avatar}
-                  />
-                </Link>
-
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Link to={`/profile/${post.author?._id}`} style={{ textDecoration: 'none', color: '#000', fontWeight: 'bold' }}>
-                      {post.author?.displayName || 'Unknown'}
-                    </Link>
-                    {/* AddPeerButton next to author if not own post */}
-                    {!isOwnPost && token && <AddPeerButton targetUserId={post.author?._id} />}
+            return (
+              <div key={post._id} className="post-card">
+                <div className="post-header">
+                  <Link to={`/profile/${post.author?._id}`}>
+                    <img
+                      src={post.author?.profilePic || 'https://via.placeholder.com/40'}
+                      alt={post.author?.displayName || 'User'}
+                      className="avatar"
+                    />
+                  </Link>
+                  <div>
+                    <div className="author-row">
+                      <Link to={`/profile/${post.author?._id}`} className="author-name">
+                        {post.author?.displayName || 'Unknown'}
+                      </Link>
+                      {!isOwnPost && token && <AddPeerButton targetUserId={post.author?._id} />}
+                    </div>
+                    <p className="timestamp">{post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now'}</p>
                   </div>
-                  <p style={styles.timestamp}>
-                    {post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now'}
-                  </p>
+                </div>
+
+                <div className="post-body">
+                  <h3>{post.title || ''}</h3>
+                  <p>{post.content || ''}</p>
+                </div>
+
+                <div className="post-footer">
+                  <button onClick={() => handleLike(post._id)} disabled={!user}>
+                    {isLiked ? '❤️ Unlike' : '👍 Like'} ({post.likes?.length || 0})
+                  </button>
+                </div>
+
+                <div className="comments-section">
+                  <strong>Comments:</strong>
+                  <ul>
+                    {post.comments && post.comments.length > 0 ? (
+                      post.comments.map((c, i) => (
+                        <li key={i}>
+                          <Link to={`/profile/${c.author?._id}`} className="comment-author">
+                            <b>{c.author?.displayName || 'Unknown'}</b>
+                          </Link>: {c.text}
+                        </li>
+                      ))
+                    ) : (
+                      <li>No comments yet.</li>
+                    )}
+                  </ul>
+                  {user && <CommentInput postId={post._id} onAddComment={handleAddComment} />}
                 </div>
               </div>
+            );
+          })
+        }
+      </div>
 
-              <div style={styles.body}>
-                <h3>{post.title || ''}</h3>
-                <p>{post.content || ''}</p>
-              </div>
-
-              <div style={styles.footer}>
-                <button style={styles.btn} onClick={() => handleLike(post._id)} disabled={!user}>
-                  {isLiked ? '❤️ Unlike' : '👍 Like'} ({post.likes?.length || 0})
-                </button>
-              </div>
-
-              <div style={{ marginTop: '1rem' }}>
-                <strong>Comments:</strong>
-                <ul>
-                  {post.comments?.map((c, i) => (
-                    <li key={i}>
-                      <Link to={`/profile/${c.author?._id}`} style={{ textDecoration: 'none', color: '#000' }}>
-                        <b>{c.author?.displayName || 'Unknown'}</b>
-                      </Link>: {c.text}
-                    </li>
-                  )) || <li>No comments yet.</li>}
-                </ul>
-                {user && <CommentInput postId={post._id} onAddComment={handleAddComment} />}
-              </div>
-            </div>
-          );
-        })
-      }
+      <div className="right-panel">
+        {token && (
+          <div className="create-post-box">
+            <CreatePost token={token} onPostCreated={newPost => setPosts(prev => [newPost, ...prev])} />
+          </div>
+        )}
+      </div>
     </div>
   );
-};
-
-const styles = {
-  card: { border: '1px solid #ddd', borderRadius: '8px', padding: '1rem', marginBottom: '1.5rem', backgroundColor: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' },
-  header: { display: 'flex', alignItems: 'center', marginBottom: '1rem', gap: '0.75rem' },
-  avatar: { width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', cursor: 'pointer' },
-  timestamp: { fontSize: '0.8rem', color: '#666', margin: 0 },
-  body: { marginBottom: '1rem' },
-  footer: { display: 'flex', gap: '1rem' },
-  btn: { background: '#f0f0f0', border: 'none', padding: '0.5rem 1rem', borderRadius: '4px', cursor: 'pointer' },
 };
 
 export default Feed;

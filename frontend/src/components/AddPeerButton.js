@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import './AddPeerButton.css'; // import the CSS file
 
 const AddPeerButton = ({ targetUserId }) => {
   const { token } = useContext(AuthContext);
@@ -38,17 +39,9 @@ const AddPeerButton = ({ targetUserId }) => {
 
   return (
     <button
+      className="add-peer-button"
       onClick={sendRequest}
       disabled={status !== 'none'}
-      style={{
-        padding: '5px 10px',
-        borderRadius: '5px',
-        backgroundColor: status === 'accepted' ? '#4caf50' : '#2196f3',
-        color: '#fff',
-        border: 'none',
-        cursor: status === 'none' ? 'pointer' : 'default',
-        marginLeft: '10px'
-      }}
     >
       {status === 'none' ? 'Add Peer' : status === 'pending' ? 'Sent' : 'Peer'}
     </button>
