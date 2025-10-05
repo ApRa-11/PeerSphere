@@ -5,7 +5,7 @@ import graduationImg from '../images/graduation.png';
 
 function Landing() {
   const navigate = useNavigate();
-
+  
   return (
     <div className="landing-container">
       <div className="left-side">
