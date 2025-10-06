@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/Register.css';
-
-// If using import (React 18+ / Vite)
-import defaultProfilePic from '../images/profile-picture.jpeg'; // <-- Default image path
+import defaultProfilePic from '../images/profile-picture.jpeg';
 
 const Register = () => {
   const [formData, setFormData] = useState({
     username: '',
-    fullName: '',
+    displayName: '', // renamed from fullName
     email: '',
     password: '',
     confirmPassword: '',
@@ -23,7 +21,8 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e) => {
@@ -33,9 +32,11 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { username, fullName, email, password, confirmPassword } = formData;
+    console.log('Form Data before submit:', formData); // Debug
 
-    if (!username || !fullName || !email || !password || !confirmPassword) {
+    const { username, displayName, email, password, confirmPassword } = formData;
+
+    if (!username.trim() || !displayName.trim() || !email.trim() || !password || !confirmPassword) {
       setMessage('Please fill all required fields');
       return;
     }
@@ -50,12 +51,12 @@ const Register = () => {
 
     try {
       const data = new FormData();
-      data.append('username', username);
-      data.append('fullName', fullName);
-      data.append('email', email);
+      data.append('username', username.trim());
+      data.append('displayName', displayName.trim()); // match backend
+      data.append('email', email.trim());
       data.append('password', password);
       data.append('confirmPassword', confirmPassword);
-      data.append('bio', formData.bio);
+      data.append('bio', formData.bio.trim());
       data.append('dob', formData.dob);
       if (profilePic) data.append('profilePic', profilePic);
 
@@ -86,7 +87,6 @@ const Register = () => {
       <div className="register-box">
         <h2>Register</h2>
 
-        {/* Profile Picture Upload moved to top */}
         <div className="profile-pic-upload">
           <div className="profile-pic-container">
             <img
@@ -94,8 +94,8 @@ const Register = () => {
               alt="Profile"
               className="profile-pic-img"
             />
-            <label htmlFor="profilePicInput">
-              <button type="button" className="add-picture-btn">Add Picture</button>
+            <label htmlFor="profilePicInput" className="add-picture-btn">
+              Add Picture
             </label>
           </div>
           <input
@@ -120,9 +120,9 @@ const Register = () => {
 
           <input
             type="text"
-            name="fullName"
+            name="displayName" // changed from fullName
             placeholder="Full Name"
-            value={formData.fullName}
+            value={formData.displayName}
             onChange={handleChange}
             required
           />
@@ -172,6 +172,7 @@ const Register = () => {
             {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
+
         {message && <p className="message">{message}</p>}
       </div>
     </div>

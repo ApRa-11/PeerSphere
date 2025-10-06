@@ -1,0 +1,84 @@
+/* Page background */
+.create-post-page {
+  min-height: 100vh;
+  background-image: url('../../images/white-background.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+/* Main black container */
+.create-post-box {
+  background-image: url('../../images/black-background.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 4rem 4rem;        /* more space inside */
+  border-radius: 12px;
+  width: 100%;
+  max-width: 900px;           /* wider box */
+  height: 50vh;               /* taller box */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;    /* vertically center form */
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.35); /* stronger shadow */
+}
+
+/* Heading */
+.create-post-box h2 {
+  color: white;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+/* Input fields and textarea */
+.create-post-box input,
+.create-post-box textarea {
+  display: block;
+  width: 96%;
+  margin-bottom: 1rem;
+  padding: 0.75rem;       /* bigger padding */
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+}
+
+/* Title input slightly taller */
+.create-post-box input {
+  height: 45px;
+}
+
+/* Textarea for content */
+.create-post-box textarea {
+  height: 150px;           /* bigger content area */
+  resize: vertical;        /* allow user to resize */
+}
+
+/* Post button */
+.create-post-box button {
+  background-color: white;
+  color: black;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  display: block;
+  margin: 1rem auto 0 auto;
+  transition: all 0.2s ease;
+}
+
+.create-post-box button:hover {
+  background-color: #f0f0f0; /* subtle hover effect */
+}
+
+/* Message below the form */
+.create-post-box p {
+  color: white;
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 1rem;
+}

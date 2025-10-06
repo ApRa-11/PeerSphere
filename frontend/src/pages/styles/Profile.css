@@ -1,0 +1,64 @@
+.profile-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+.profile-left {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #000;
+}
+
+.profile-right {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 60px;
+}
+
+.profile-pic {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #000;
+  margin-bottom: 25px;
+}
+
+.display-name {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.right-display-name {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.username {
+  color: #ccc;
+  font-size: 1.2rem;
+  margin-bottom: 25px;
+}
+
+.add-peer-btn {
+  margin-top: 25px;
+}
+
+.loading-text,
+.error-text {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 1.2rem;
+}

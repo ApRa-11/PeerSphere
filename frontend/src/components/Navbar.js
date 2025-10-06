@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import AddPeerButton from './AddPeerButton';
+import './Navbar.css';
 
 const Navbar = () => {
   const { token, user, logout } = useContext(AuthContext);
@@ -65,7 +66,7 @@ const Navbar = () => {
 
   useEffect(() => {
     fetchRequests();
-    const interval = setInterval(fetchRequests, 10000); // refresh every 10s
+    const interval = setInterval(fetchRequests, 10000);
     return () => clearInterval(interval);
   }, [token]);
 
@@ -84,36 +85,38 @@ const Navbar = () => {
   };
 
   return (
-    <nav style={styles.nav}>
-      <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-        <h2 style={styles.logo}>PeerSphere</h2>
-      </Link>
+    <nav className="navbar">
+      <div className="navbar-left">
+        <Link to="/feed" className="logo-link">
+          <h2 className="logo">PeerSphere</h2>
+        </Link>
+      </div>
 
       {/* --- Search Bar --- */}
       {token && (
-        <form onSubmit={handleSearch} style={styles.searchForm}>
+        <form onSubmit={handleSearch} className="search-form" ref={dropdownRef}>
           <input
             type="text"
             placeholder="Search users..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setShowDropdown(true)}
-            style={styles.searchInput}
+            className="search-input"
           />
-          <button type="submit" style={styles.searchButton}>Search</button>
+          <button type="submit" className="search-btn">Search</button>
 
           {showDropdown && results.length > 0 && (
-            <div style={styles.dropdown} ref={dropdownRef}>
+            <div className="search-dropdown">
               {results.map((u) => (
-                <div key={u._id} style={styles.dropdownItem}>
+                <div key={u._id} className="dropdown-item">
                   <img
                     src={u.profilePic || '/images/default-avatar.png'}
                     alt={u.fullName}
-                    style={styles.avatar}
+                    className="dropdown-avatar"
                   />
-                  <div style={styles.userInfo}>
-                    <p style={styles.fullName}>{u.fullName}</p>
-                    <p style={styles.username}>@{u.username}</p>
+                  <div className="dropdown-info">
+                    <p className="dropdown-name">{u.fullName}</p>
+                    <p className="dropdown-username">@{u.username}</p>
                   </div>
                   <AddPeerButton targetUserId={u._id} />
                 </div>
@@ -123,45 +126,45 @@ const Navbar = () => {
         </form>
       )}
 
-      <div style={styles.links}>
+      <div className="navbar-right">
         {token ? (
           <>
-            <Link to="/feed" style={styles.link}>Home</Link>
-            <Link to="/create" style={styles.link}>Create Post</Link>
+            <Link to="/feed" className="nav-link">Home</Link>
+            <Link to="/create" className="nav-link">Create Post</Link>
 
             {/* Notification Bell */}
             <div
-              style={styles.bellContainer}
+              className="bell-container"
               onClick={() => setShowRequests((prev) => !prev)}
             >
               🔔
               {requests.length > 0 && (
-                <span style={styles.badge}>{requests.length}</span>
+                <span className="badge">{requests.length}</span>
               )}
               {showRequests && (
-                <div style={styles.requestsDropdown}>
+                <div className="requests-dropdown">
                   {requests.length === 0 ? (
-                    <p style={{ margin: 0 }}>No new requests</p>
+                    <p>No new requests</p>
                   ) : (
                     requests.map((r) => (
-                      <div key={r._id} style={styles.requestItem}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div key={r._id} className="request-item">
+                        <div className="request-user">
                           <img
                             src={r.requesterId?.profilePic || '/images/default-avatar.png'}
                             alt={r.requesterId?.fullName}
-                            style={{ width: '35px', height: '35px', borderRadius: '50%' }}
+                            className="request-avatar"
                           />
                           <span>{r.requesterId?.fullName}</span>
                         </div>
-                        <div style={{ display: 'flex', gap: '6px', marginTop: '5px' }}>
+                        <div className="request-actions">
                           <button
-                            style={{ ...styles.reqBtn, background: '#4caf50' }}
+                            className="accept-btn"
                             onClick={() => handleRespond(r.requesterId._id, 'accept')}
                           >
                             Accept
                           </button>
                           <button
-                            style={{ ...styles.reqBtn, background: '#f44336' }}
+                            className="reject-btn"
                             onClick={() => handleRespond(r.requesterId._id, 'reject')}
                           >
                             Reject
@@ -174,118 +177,23 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Profile link */}
             {userId && (
-              <Link to={`/profile/${userId}`} style={styles.link}>
-                User
-              </Link>
+              <Link to={`/profile/${userId}`} className="nav-link">User</Link>
             )}
 
-            <span
-              onClick={handleLogout}
-              style={{ ...styles.link, cursor: 'pointer' }}
-            >
+            <span className="nav-link logout-link" onClick={handleLogout}>
               Logout
             </span>
           </>
         ) : (
           <>
-            <Link to="/login" style={styles.link}>Login</Link>
-            <Link to="/register" style={styles.link}>Register</Link>
+            <Link to="/login" className="nav-link">Login</Link>
+            <Link to="/register" className="nav-link">Register</Link>
           </>
         )}
       </div>
     </nav>
   );
-};
-
-const styles = {
-  nav: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '10px 20px',
-    backgroundColor: '#282c34',
-    color: '#fff',
-    position: 'relative'
-  },
-  logo: { margin: 0 },
-  links: { display: 'flex', gap: '15px', alignItems: 'center' },
-  link: { color: '#fff', textDecoration: 'none' },
-
-  // Search
-  searchForm: { position: 'relative', display: 'flex', marginRight: '20px' },
-  searchInput: { padding: '5px 8px', borderRadius: '6px', border: 'none' },
-  searchButton: {
-    marginLeft: '5px',
-    padding: '5px 10px',
-    borderRadius: '6px',
-    border: 'none',
-    cursor: 'pointer',
-    backgroundColor: '#2196f3',
-    color: '#fff'
-  },
-  dropdown: {
-    position: 'absolute',
-    top: '35px',
-    left: 0,
-    right: 0,
-    background: 'white',
-    color: 'black',
-    border: '1px solid #ccc',
-    borderRadius: '6px',
-    maxHeight: '300px',
-    overflowY: 'auto',
-    zIndex: 1000
-  },
-  dropdownItem: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '5px 8px',
-    borderBottom: '1px solid #eee'
-  },
-  avatar: { width: '40px', height: '40px', borderRadius: '50%', marginRight: '8px' },
-  userInfo: { flex: 1 },
-  fullName: { margin: 0, fontWeight: 600 },
-  username: { margin: 0, fontSize: '0.85rem', color: '#666' },
-
-  // Notifications
-  bellContainer: { position: 'relative', cursor: 'pointer' },
-  badge: {
-    position: 'absolute',
-    top: '-5px',
-    right: '-10px',
-    background: 'red',
-    color: 'white',
-    borderRadius: '50%',
-    padding: '2px 6px',
-    fontSize: '0.7rem'
-  },
-  requestsDropdown: {
-    position: 'absolute',
-    right: 0,
-    top: '25px',
-    background: 'white',
-    color: 'black',
-    border: '1px solid #ccc',
-    borderRadius: '6px',
-    minWidth: '220px',
-    padding: '8px',
-    zIndex: 1000
-  },
-  requestItem: {
-    borderBottom: '1px solid #eee',
-    paddingBottom: '6px',
-    marginBottom: '6px'
-  },
-  reqBtn: {
-    flex: 1,
-    border: 'none',
-    color: 'white',
-    padding: '4px 8px',
-    borderRadius: '4px',
-    cursor: 'pointer'
-  }
 };
 
 export default Navbar;

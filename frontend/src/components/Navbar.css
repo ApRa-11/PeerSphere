@@ -1,0 +1,177 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #282c34;
+  color: white;
+  padding: 10px 20px;
+  position: relative;
+}
+
+.logo-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo {
+  margin: 0;
+}
+
+.navbar-left {
+  flex: 1;
+}
+
+.search-form {
+  display: flex;
+  position: relative;
+  margin-right: 20px;
+  flex: 2;
+  justify-content: flex-end;
+}
+
+.search-input {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: none;
+}
+
+.search-btn {
+  margin-left: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2196f3;
+  color: white;
+  cursor: pointer;
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  background: white;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  width: 260px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.dropdown-info {
+  flex: 1;
+}
+
+.dropdown-name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.dropdown-username {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+}
+
+.logout-link {
+  cursor: pointer;
+}
+
+.bell-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+}
+
+.requests-dropdown {
+  position: absolute;
+  right: 0;
+  top: 25px;
+  background: white;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 220px;
+  padding: 8px;
+  z-index: 1000;
+}
+
+.request-item {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+
+.request-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.request-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.request-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 5px;
+}
+
+.accept-btn {
+  flex: 1;
+  background: #4caf50;
+  border: none;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reject-btn {
+  flex: 1;
+  background: #f44336;
+  border: none;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './styles/CreatePost.css';
 
 const CreatePost = ({ token, onPostCreated }) => {
   const [title, setTitle] = useState('');
@@ -34,25 +35,25 @@ const CreatePost = ({ token, onPostCreated }) => {
   };
 
   return (
-    <div style={{ marginBottom: '2rem' }}>
-      <h2>Create Post</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          style={{ display: 'block', marginBottom: '0.5rem', width: '100%' }}
-        />
-        <textarea
-          placeholder="Write something..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          style={{ display: 'block', marginBottom: '0.5rem', width: '100%', height: '80px' }}
-        />
-        <button type="submit">Post</button>
-      </form>
-      {message && <p>{message}</p>}
+    <div className="create-post-page">
+      <div className="create-post-box">
+        <h2>Create Post</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <textarea
+            placeholder="Write something..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
+          <button type="submit">Post</button>
+        </form>
+        {message && <p>{message}</p>}
+      </div>
     </div>
   );
 };

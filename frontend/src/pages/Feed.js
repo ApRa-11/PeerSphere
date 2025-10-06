@@ -141,10 +141,15 @@ const Feed = () => {
         }
       </div>
 
+      {/* Right panel Create Post */}
       <div className="right-panel">
         {token && (
-          <div className="create-post-box">
-            <CreatePost token={token} onPostCreated={newPost => setPosts(prev => [newPost, ...prev])} />
+          <div className="create-post-container">
+            <CreatePost
+              token={token}
+              onPostCreated={newPost => setPosts(prev => [newPost, ...prev])}
+              mode="feed"
+            />
           </div>
         )}
       </div>
